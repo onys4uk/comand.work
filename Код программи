@@ -9,11 +9,12 @@ class Hotel:
     def available_rooms(self):
         return [room for room in self.rooms if not room.is_booked]
 
-    # Функція book_room бронює кімнату з заданим номером, якщо вона є доступною
-    def book_room(self, room_number):
+    # Функція book_room бронює кімнату з заданим номером на задану кількість днів, якщо вона є доступною
+    def book_room(self, room_number, days):
         for room in self.rooms:
             if room.number == room_number:
                 room.is_booked = True
+                print(f"Кімната {room_number} у готелі {self.name} успішно заброньована на {days} днів")
                 return True
         return False
 
@@ -58,13 +59,12 @@ def list_rooms(hotel_letter):
         print(f"Готель з буквою {hotel_letter} не знайдено")
         return False
 
-# Функція book_room бронює кімнату у вибраному готелі
-def book_room(hotel_letter, room_number):
+# Функція book_room бронює кімнату у вибраному готелі на задану кількість днів
+def book_room(hotel_letter, room_number, days):
     index = ord(hotel_letter) - ord('A')
     if index >= 0 and index < len(hotels):
         hotel = hotels[index]
-        if hotel.book_room(room_number):
-            print(f"Кімната {room_number} у готелі {hotel.name} успішно заброньована")
+        if hotel.book_room(room_number, days):
             return
         else:
             print(f"Кімната {room_number} у готелі {hotel.name} недоступна для бронювання")
@@ -99,7 +99,8 @@ def main():
                 break
             elif action == 'b':
                 selected_room = input("Введіть номер кімнати для бронювання: ")
-                book_room(selected_hotel, int(selected_room))
+                days = int(input("Введіть кількість днів для бронювання: "))
+                book_room(selected_hotel, int(selected_room), days)
             elif action == 'c':
                 selected_room = input("Введіть номер кімнати для скасування бронювання: ")
                 cancel_booking(selected_hotel, int(selected_room))
