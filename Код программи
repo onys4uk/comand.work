@@ -1,12 +1,15 @@
+# Клас Hotel представляє готель з іменем, рейтингом та списком кімнат
 class Hotel:
     def __init__(self, name, rating, rooms):
         self.name = name
         self.rating = rating
         self.rooms = rooms
 
+    # Функція available_rooms повертає список доступних кімнат у готелі
     def available_rooms(self):
         return [room for room in self.rooms if not room.is_booked]
 
+    # Функція book_room бронює кімнату з заданим номером, якщо вона є доступною
     def book_room(self, room_number):
         for room in self.rooms:
             if room.number == room_number:
@@ -14,6 +17,15 @@ class Hotel:
                 return True
         return False
 
+    # Функція cancel_booking скасовує бронювання кімнати з заданим номером, якщо вона була заброньована раніше
+    def cancel_booking(self, room_number):
+        for room in self.rooms:
+            if room.number == room_number:
+                room.is_booked = False
+                return True
+        return False
+
+# Клас Room представляє кімнату у готелі з номером, ціною та кількістю спальних місць
 class Room:
     def __init__(self, number, price, beds):
         self.number = number
@@ -21,17 +33,20 @@ class Room:
         self.beds = beds
         self.is_booked = False
 
+# Створюємо список готелів для прикладу
 hotels = [
     Hotel("Готель 1", 4.5, [Room(101, 1000, 2), Room(102, 1200, 2), Room(103, 1500, 3)]),
     Hotel("Готель 2", 4.2, [Room(201, 800, 1), Room(202, 900, 2), Room(203, 1100, 3)]),
     Hotel("Готель 3", 3.9, [Room(301, 700, 1), Room(302, 850, 2), Room(303, 950, 4)])
 ]
 
+# Функція list_hotels виводить список доступних готелів з буквами для вибору
 def list_hotels():
     for i, hotel in enumerate(hotels):
         letter = chr(ord('A') + i)
         print(f"{letter}: {hotel.name} - Доступні кімнати: {len(hotel.available_rooms())} - Рейтинг: {hotel.rating}")
 
+# Функція list_rooms виводить список доступних кімнат у вибраному готелі
 def list_rooms(hotel_letter):
     index = ord(hotel_letter) - ord('A')
     if index >= 0 and index < len(hotels):
@@ -43,6 +58,7 @@ def list_rooms(hotel_letter):
         print(f"Готель з буквою {hotel_letter} не знайдено")
         return False
 
+# Функція book_room бронює кімнату у вибраному готелі
 def book_room(hotel_letter, room_number):
     index = ord(hotel_letter) - ord('A')
     if index >= 0 and index < len(hotels):
@@ -56,6 +72,21 @@ def book_room(hotel_letter, room_number):
     else:
         print(f"Готель з буквою {hotel_letter} не знайдено")
 
+# Функція cancel_booking скасовує бронювання кімнати у вибраному готелі
+def cancel_booking(hotel_letter, room_number):
+    index = ord(hotel_letter) - ord('A')
+    if index >= 0 and index < len(hotels):
+        hotel = hotels[index]
+        if hotel.cancel_booking(room_number):
+            print(f"Бронювання кімнати {room_number} у готелі {hotel.name} успішно скасовано")
+            return
+        else:
+            print(f"Кімната {room_number} у готелі {hotel.name} не була заброньована")
+            return
+    else:
+        print(f"Готель з буквою {hotel_letter} не знайдено")
+
+# Головна функція програми, яка запускає інтерактивний режим для користувача
 def main():
     while True:
         list_hotels()
@@ -63,10 +94,15 @@ def main():
         if selected_hotel == 'q':
             break
         if list_rooms(selected_hotel):
-            selected_room = input("Введіть номер кімнати для бронювання або 'q' для виходу: ")
-            if selected_room == 'q':
+            action = input("Введіть 'b' для бронювання кімнати, 'c' для скасування бронювання або 'q' для виходу: ")
+            if action == 'q':
                 break
-            book_room(selected_hotel, int(selected_room))
+            elif action == 'b':
+                selected_room = input("Введіть номер кімнати для бронювання: ")
+                book_room(selected_hotel, int(selected_room))
+            elif action == 'c':
+                selected_room = input("Введіть номер кімнати для скасування бронювання: ")
+                cancel_booking(selected_hotel, int(selected_room))
 
 if __name__ == "__main__":
     main()
